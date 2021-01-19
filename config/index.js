@@ -10,7 +10,15 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+    proxyTable: {
+		'/api': {
+		  target: process.env.NODE_ENV=='test'?"https://api-dev.macaotown.com":"https://api.macaotown.com", // 目标地址
+		  changeOrigin: true, // 是否跨域
+		  pathRewrite: { // 重定向地址
+		   '^/api': ''
+		   }
+		  }
+	},
 
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST

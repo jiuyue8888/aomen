@@ -1,47 +1,67 @@
 <template>
 	<div class="list">
-		<div class="part1">
-			<span class="curr">未使用</span>
-			<span>已使用</span>
-			<span>已過期</span>
-		</div>
-		<div class="noData">
-			<img src="../../assets/list/none.png"/>
-			<p>居然甚麼都沒有T^T <br>
-			快去參與遊戲獲得更多獎品吧！</p>
-		</div>
-		<div class="part2">
-			<div v-for="(item,id) in 6" class="card">
-				<div class="top">
-					<h5>AirPods Pro兌換券</h5>
-					<span>XX盲盒</span>
-				</div>
-				<div class="down">
-					<div class="left"><img src="../../assets/product/pro.png"></div>
-					<div class="right">
-						<p>獎品編號：9283774047575</p>
-						<p>有效期至：2020-12-19 11:00</p>
-						<b><img src="../../assets/list/btn.png"></b>
-					</div>
-				</div>
+		<div >
+		
+			<van-tabs v-model="type" @change="getList(type)" :swipeable="true">
+			  <van-tab v-for="(item,id) in nav" :title="item" :key='id'>
+				  <div class="noData" v-if="data.length==0">
+				  	<img src="../../assets/list/none.png"/>
+				  	<p>居然甚麼都沒有T^T <br>
+				  	快去參與遊戲獲得更多獎品吧！</p>
+				  </div>
+				  <div class="part2" v-else>
+				  	<div v-for="(item,id) in data" class="card" :key="id" @click="$router.push({path:'./product',query:{couponno:item.couponno,id:item.mbid,type:0}})">
+				  		<div class="top">
+				  			<h5>{{item.name}}</h5>
+				  			<span>{{item.mbname}}</span>
+				  		</div>
+				  		<div class="down">
+				  			<div class="left"><img :src="item.icon"></div>
+				  			<div class="right">
+				  				<p>獎品編號：{{item.couponno}}</p>
+				  				<p>有效期至：{{item.exptime}}</p>
+				  				<b><img src="../../assets/list/btn.png"></b>
+				  			</div>
+				  		</div>
+				  	</div>
+				  </div>
+			  </van-tab>
+			</van-tabs>
 			</div>
-		</div>
-		<div class="part3">
-			
+			<!--<span :class="type==id?'curr':''" v-for="(item,id) in nav" :key="id" @click="getList(id)">{{item}}</span>-->
+		
+		
+		<div class="part3" v-show="false">
+			<img src="../../assets/list/kv.png" />
 		</div>
 	</div>
 </template>
 
 <script>
+	import {myList} from '../../serve/index.js';
 export default {
 	name: 'list',
 
 	data() {
-		return {};
+		return {
+			type:0,
+			nav:['未使用','已使用','已過期'],
+			data:[]
+		};
 	},
-	created() {},
+	created() {
+		this.getList(0)
+	},
 	methods: {
-		
+		getList(n){
+			const that = this;
+			this.type=n;
+			myList({
+				type:n
+			}).then(res=>{
+				that.data = res.data
+			})
+		}
 	},
 	watch: {},
 
@@ -53,12 +73,12 @@ export default {
 	.noData{
 		position: relative;
 		width: 100%;
-		height: calc(100vh - 350px);
+		height: calc(100vh - 400px);
 		text-align: center;
 		padding-top: 180px;
 		box-sizing: border-box;
 		font-size: 32px;
-		font-family: Source Han Sans CN;
+		
 		font-weight: 400;
 		color: #794001;
 		line-height: 60px;
@@ -70,10 +90,13 @@ export default {
 	.list{
 		position: relative;
 		width: 100%;
+		height: 100vh;
+		overflow-x: hidden;
+		overflow-y: auto;
 		box-sizing: border-box;
-		padding: 25px;
-		background: url(../../assets/home/bgb.png) no-repeat 0 0;
-		background-size: 100%;
+		padding: 135px 25px 0;
+		background: url(../../assets/list/lbg.png) no-repeat 0 0;
+		background-size: 100% 100%;
 		.card{
 			position: relative;
 			width: 100%;
@@ -93,7 +116,7 @@ export default {
 			align-items: center;
 			
 			font-size: 28px;
-			font-family: SourceHanSansSC;
+			
 			font-weight: 400;
 			color: #794001;
 			line-height: 48px;
@@ -112,7 +135,7 @@ export default {
 			width: 180px;
 			height: 180px;
 			box-sizing: border-box;
-			padding: 20px;
+			
 			background: linear-gradient(123deg, rgba(222, 210, 111, 0.5), rgba(183, 218, 135, 0.5));
 			border-radius: 10px;
 			overflow: hidden;
@@ -134,46 +157,36 @@ export default {
 			justify-content: space-between;
 			
 			font-size: 32px;
-			font-family: SourceHanSansSC;
+		
 			font-weight: 500;
 			color: #A4451E;
 			span{
 				
 				font-size: 28px;
-				font-family: Adobe Heiti Std;
+	
 				font-weight: normal;
 				color: #8F6E5D;
 			}
 		}
 		.part1{
-			position: relative;
-			width: 100%;
+			position: fixed;
+			left: 25px;
+			top: 25px;
+			z-index: 8;
+			width: 92%;
 			display: flex;
 			justify-content: space-around;
 			align-items: center;
-			height: 90px;
-			background: rgba(255, 255, 255, 0.4);
-			box-shadow: 0px 6px 10px 0px rgba(0, 0, 0, 0.13), 0px 3px 0px 0px #FFFFFF;
-			line-height: 90px;
-			border-radius: 45px;
-			box-sizing: border-box;
-			margin-bottom: 25px;
 			
-			font-size: 34px;
-			font-family: SourceHanSansSC;
-			font-weight: 500;
-			color: #753B30;
 			
-			opacity: 0.8;
-			span{
-				display: block;
-				width: 230px;
-				height: 90px;
-				text-align: center;
-			}
+			
+			
+			opacity: 1;
+			
 			.curr{
 				width: 230px;
 				height: 90px;
+				color: #FF7814;
 				background: #FFFFFF;
 				box-shadow: 0px 8px 35px 0px rgba(0, 0, 0, 0.2);
 				border-radius: 45px;

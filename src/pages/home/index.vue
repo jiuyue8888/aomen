@@ -4,55 +4,139 @@
 			<img src="../../assets/home/logo.png">
 			
 		</div>
-		<div class="tips"><img src="../../assets/home/w.png"></div>
+		<div class="tips" @click="openUrl(html)"><img src="../../assets/home/w.png"></div>
 		<div class="product">
 			<div class="title"><img src="../../assets/home/font.png"></div>
 			<div class="top">
 				<div class="bg"><img src="../../assets/home/titlebg.png" /></div>
 				<div class="left">
 					<img src="../../assets/home/jb.png" class="jb">
-					<span>133</span>
+					<span class="span">{{hahacoin}}</span>
 					<div class="add animated pulse infinite" @click="taskShow=true"><img src="../../assets/home/add.png"></div>
 				</div>
-				<div class="right">
-					<img src="../../assets/home/lw.png" class="lw">
-					<span>我的獎品</span>
+				<div class="right" @click="$router.push('./list')">
+					<img src="../../assets/home/bb.png" class="">
+					
 				</div>
 				
 			</div>
 			<div class="lists">
 				<ul>
-					<li v-for="(item,id) in 4">
-						<img src="../../assets/home/pic.png">
-						<p><span>小鎮首發盲盒</span><b>50</b></p>
+					<li v-for="(item,id) in list" @click="$router.push({path:'./detail',query:{id:item.id}})" :key="id">
+						<img :src="item.icon">
+						<p><span>{{item.name}}</span><b>{{item.price}}</b></p>
 					</li>
 					
 				</ul>
 			</div>
 		</div>
-		<div class="footer">
-			澳门小镇     
-			<br>数字化游戏营销服务平台			                            
+		<div class="footer" @click="openUrl('https://www.macaotown.com')">
+			澳門小鎮
+			<br>數字化遊戲營銷服務平台	                            
 		</div>
 		<task v-if="taskShow" @hide="hide"></task>
+		<div class="pop" v-show="help">
+			
+			<div class="pop_body">
+				<img src="../../assets/task/close.png" class="close" @click="help=false"/>
+				<div>
+					<iframe id="show-iframe"  frameborder=0 name="showHere" scrolling=auto :src="html"></iframe>
+				</div>
+			</div>
+		</div>
 	</div>
 </template>
 
 <script>
 	import task from '../task/index.vue';
+	import {home,getToken,userinfo,getUserinfo,helpContent,helpUrl} from '../../serve/index.js';
 	export default {
-		name: 'home',
+		name: 'index',
 		components:{task},
 		data() {
 			return {
-				taskShow:false
-				}
+				taskShow:false,
+				list:JSON.parse(localStorage.getItem('list'))||[],
+				help:false,
+				html:'',
+				hahacoin:localStorage.getItem('hahacoin')||0
+			}
 		},
 		created() {
+			const that = this;
+			
+			console.log(that.getQueryString('auth_token'))
+			
+			if(window.location.origin.indexOf('localhost')>=0){
+				getToken()
+				userinfo({}).then(res=>{
+					localStorage.setItem('hahacoin', res.data.hahacoin);
+					localStorage.setItem('subscribe', res.data.subscribe);
+					localStorage.setItem('nickname', res.data.nickname);
+					this.hahacoin = res.data.hahacoin
+				})
+			}else{
+				const url = localStorage.getItem('env')=='test'?`https://api-dev.macaotown.com/wx/get_userinfo?backurl=/`:`https://api.macaotown.com/wx/get_userinfo?backurl=/`;
+				if(localStorage.getItem('token')==undefined||localStorage.getItem('token')==null||localStorage.getItem('token')=='null'||
+				localStorage.getItem('token')=='undefined'){
+					localStorage.setItem('token', 'Bearer '+that.getQueryString('auth_token'))
+					window.location.href = url
+				}else{
+					if(that.getQueryString('auth_token')!=null){
+						localStorage.setItem('token', 'Bearer '+that.getQueryString('auth_token'))
+					}
+					userinfo({}).then(res=>{
+						localStorage.setItem('hahacoin', res.data.hahacoin);
+						localStorage.setItem('subscribe', res.data.subscribe);
+						localStorage.setItem('nickname', res.data.nickname);
+						this.hahacoin = res.data.hahacoin
+					})
+					
+				}
+			}
+			home().then(res=>{
+				this.list = res.data;
+				localStorage.setItem('list', JSON.stringify(res.data));
+			})
+			
+			helpUrl().then(res=>{
+				this.html=res.data.url
+			})
 			
 			
 		},
 		methods: {
+			openUrl(url){
+				window.open(url)
+			},
+			getQueryString(name) {
+			    var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+			    var r = window.location.search.substr(1).match(reg);
+			    if (r != null) {
+			        return unescape(r[2]);
+			    }
+			    return null;
+			},
+			GetUrlParame(parameName) {
+			    /// 获取地址栏指定参数的值
+			    /// <param name="parameName">参数名</param>
+			    // 获取url中跟在问号后面的部分
+			    var parames = window.location.search
+			    // 检测参数是否存在
+			    if (parames.indexOf(parameName) > -1) {
+			        var parameValue = ''
+			        parameValue = parames.substring(parames.indexOf(parameName), parames.length)
+			        // 检测后面是否还有参数
+			        if (parameValue.indexOf('&') > -1) {
+			            // 去除后面多余的参数, 得到最终 parameName=parameValue 形式的值
+			            parameValue = parameValue.substring(0, parameValue.indexOf('&'))
+			            // 去掉参数名, 得到最终纯值字符串
+			            parameValue = parameValue.replace(parameName + '=', '')
+			            return parameValue
+			        }
+			        return ''
+			    }
+			},
 			hide(){
 				this.taskShow=false;
 				
@@ -70,10 +154,46 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
+	.animated {
+		animation-duration: 1s;
+	}
+	.pop {
+		position: fixed;
+		top: 0;
+		left: 0;
+		z-index: 99;
+		width: 100%;
+		height: 100vh;
+		background: rgba(0, 0, 0, 0.7);
+		.pop_body {
+			position: absolute;
+			width: 640px;
+			height: 90vh;
+			left: 50%;
+			top: 50%;
+			overflow: auto;
+			
+			box-sizing: border-box;
+			padding: 30px;
+			transform: translate(-50%, -50%);
+			background: #fff;
+			border-radius: 24px;
+			
+			.close {
+				position: absolute;
+				top: 30px;
+				right: 30px;
+				width: 50px;
+			}
+			
+		}
+	
+		}
 	.home{
 		position: relative;
 		width: 100%;
-		background: url(../../assets/home/bgb.png) no-repeat 0 0;
+		min-height: 100vh;
+		background: url(https://img-cdn.macaotown.com/%E8%83%8C%E6%99%AF.jpg) no-repeat 0 0;
 		background-size: 100% 100%;
 		.head{
 			position: relative;
@@ -82,25 +202,11 @@
 		}
 		.right{
 			position: absolute;
-			top: 40px;
+			top: 30px;
 			right: 60px;
-			width: 220px;
-			height: 50px;
-			background: rgba(255, 255, 255, 0.3);
-			border-radius: 25px;
-			    box-shadow: inset 0 0 20px #fff;
+			width: 230px;
+			height: 76px;
 			
-			box-sizing: border-box;
-			padding-left: 70px;
-			font-size: 32px;
-			font-family: SourceHanSansSC;
-			font-weight: bold;
-			
-			color: #854A3E;
-			line-height: 50px;
-			
-			-webkit-text-stroke: 1px #FFFFFF;
-			text-stroke: 1px #FFFFFF;
 			.lw{
 				position: absolute;
 				left: 0;
@@ -122,10 +228,10 @@
 			box-sizing: border-box;
 			padding-left: 70px;
 			font-size: 32px;
-			font-family: SourceHanSansSC;
+	
 			font-weight: bold;
 			font-style: italic;
-			color: #854A3E;
+			color: #fff;
 			line-height: 50px;
 			
 			.jb{
@@ -153,14 +259,19 @@
 		.product{
 			position: relative;
 			width: 100%;
-			
-			background: url(../../assets/home/bg.png) no-repeat 0 0;
+			top:40px;
+			background: url(../../assets/home/bg.png) no-repeat 0 bottom;
 			background-size: 100%;
+		}
+		.top{
+			position: relative;
+			top:-40px
 		}
 		.title{
 			position: absolute;
-			top:-54px;
+			top:-94px;
 			left: 50%;
+			z-index: 3;
 			width: 254px;
 			transform: translate(-50%,0);
 			margin: 0 auto;
@@ -169,7 +280,7 @@
 			text-align: center;
 			padding: 35px 0 90px;
 			font-size: 28px;
-			font-family: Source Han Sans CN;
+			
 			font-weight: bold;
 			color: #FFFFFF;
 			line-height: 44px;
@@ -179,7 +290,7 @@
 			
 			width: 100%;
 			box-sizing: border-box;
-			padding: 35px 45px;
+			padding: 0 45px 35px;
 			
 			ul{
 				position: relative;
@@ -198,13 +309,15 @@
 					background-size: 100%;
 					img{
 						display: block;
-						width: 230px;
-						margin: 0 auto 20px;
+						width: 280px;
+						height: 325px;
+						margin: 15px 0 15px 40px;
+						
 					}
 					p{
 						position: relative;
 						width: 100%;
-						height: 90px;
+						height: 70px;
 						display: flex;
 						justify-content: space-between;
 						align-items: center;
@@ -212,10 +325,10 @@
 						padding: 0 30px;
 						
 						font-size: 28px;
-						font-family: Source Han Sans CN;
+					
 						font-weight: bold;
 						color: #854A3E;
-						line-height: 90px;
+						line-height: 70px;
 					}
 					span{
 						
@@ -229,7 +342,7 @@
 						padding-left: 56px;
 						
 						font-size: 32px;
-						font-family: SourceHanSansSC;
+						
 						font-weight: bold;
 						color: #854A3E;
 						background: url(../../assets/home/jb.png) no-repeat 0 50%;
