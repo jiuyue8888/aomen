@@ -17,7 +17,7 @@ Vue.use(PasswordInput);
 Vue.use(NumberKeyboard);
 Vue.config.productionTip = false
 console.log(process.env.NODE_ENV)
-window.localStorage.setItem('env','test')
+window.localStorage.setItem('env','pro')
 /*
 const local = window.location.host;
 const dev = 'http://api.mtown.me';

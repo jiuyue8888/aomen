@@ -18,7 +18,7 @@
 							<img src="../../assets/detail/jb.png" />
 							+{{ item.prizeremark }}
 						</p>
-						<b @click="dotask(item.taskid, item.status)" :class="item.status > 1 ? 'curr' : ''">
+						<b @click="dotask(item)" :class="item.status > 1 ? 'curr' : ''">
 							<h4 class="animated fadeInUp1 infinite" v-show="item.taskid == 2">上限3個</h4>
 							{{ item.btn_name }}
 						</b>
@@ -43,26 +43,29 @@
 		</div>
 
 		<div class="pop" v-show="share">
-			<div class="top canvas" ref="box">
+			<img v-if="wxShow" :src="imgShare" class="canvasImg" />
+			<div v-else class="top canvas" ref="box">
 				<img src="../../assets/home/load.png" />
 				<div class="user">
-					<img src="../../assets/task/ewm.png" ref="img"/>
+					<img :src="ewmImg" ref="img" />
 					<p>
 						{{ nickname }}
 						<br />
-						邀請您一起關注
+						邀請你掃碼關注
+
 						<br />
-						一探究竟
+						一探究竟！
 					</p>
 				</div>
 			</div>
+			<img src="../../assets/task/close.png" class="close" @click="share = false" />
 
-			<div class="down" v-if="wxShow">
-				<img src="../../assets/task/close.png" class="close" @click="closeWx"/>
+			<div class="down" v-if="false">
+				<img src="../../assets/task/close.png" class="close" @click="closeWx" />
 				<p>分享到</p>
 				<div>
 					<span>
-						<img src="../../assets/task/pyq.png" @click="shareAction('line')"/>
+						<img src="../../assets/task/pyq.png" @click="shareAction('line')" />
 						微信朋友圈
 					</span>
 					<span>
@@ -76,7 +79,7 @@
 </template>
 
 <script>
-import { getTaskList, pickupTaskprize } from '../../serve/index.js';
+import { getTaskList, pickupTaskprize,userinfo,getQrcode } from '../../serve/index.js';
 import CommonShare from '../../unitls/index.js';
 import html2canvas from 'html2canvas';
 import { Toast } from 'vant';
@@ -89,29 +92,47 @@ export default {
 			ewm: false,
 			share: false,
 			data: [],
-			wxShow:false,
-			imgShare:'',
+			wxShow: false,
+			imgShare: '',
+			ewmImg:'',
 			subscribe: localStorage.getItem('subscribe'),
 			nickname: localStorage.getItem('nickname')
 		};
 	},
 	created() {
 		this.init();
+		getQrcode().then(res=>{
+			console.log('img---',res.data)
+			this.ewmImg = res.data.url
+		})
 	},
 	methods: {
 		init() {
 			getTaskList({}).then(res => {
 				this.data = res.data;
+				
 			});
-		},
-		closeWx(){
-			this.wxShow=false;
-			this.share=false;
 			
 		},
-		shareAction(type){
-			
-			CommonShare(type,this,'shareTitle','shareUrl',this.imgShare,'shareDesc')
+		closeWx() {
+			this.wxShow = false;
+			this.share = false;
+		},
+		shareAction(type) {
+			CommonShare(type, this, 'shareTitle', 'shareUrl', this.imgShare, 'shareDesc');
+		},
+		base64ToBlob(code) {
+			let parts = code.split(';base64,');
+			let contentType = parts[0].split(':')[1];
+			let raw = window.atob(parts[1]);
+			let rawLength = raw.length;
+
+			let uInt8Array = new Uint8Array(rawLength);
+
+			for (let i = 0; i < rawLength; ++i) {
+				uInt8Array[i] = raw.charCodeAt(i);
+			}
+			return new Blob([uInt8Array], { type: contentType });
 		},
 		showShare() {
 			const that = this;
@@ -123,15 +144,18 @@ export default {
 				dpi: window.devicePixelRatio * 2, // 对应屏幕的dpi，适配高清屏，解决canvas模糊问题
 				scale: 1, // 缩放
 				useCORS: true
-			}).then(function(canvas) {
-				that.imgShare = canvas.toDataURL();
-				
-				//console.log(canvas.toDataURL()); //将canvas转为base64图片
-			}).catch(res=>{
-				console.log(res)
-			});
-			console.log(that.imgShare )
-			that.wxShow=true
+			})
+				.then(function(canvas) {
+					//that.imgShare = URL.createObjectURL(that.base64ToBlob(canvas.toDataURL()));
+					that.imgShare = canvas.toDataURL("image/png");
+					that.wxShow = true;
+					Toast('長按圖片，發送給朋友');
+					//console.log(canvas.toDataURL()); //将canvas转为base64图片
+				})
+				.catch(res => {
+					console.log(res);
+				});
+			console.log('that.imgShare----', that.imgShare);
 		},
 		close() {
 			const that = this;
@@ -140,29 +164,34 @@ export default {
 				that.$emit('hide');
 			}, 500);
 		},
-		dotask(id, status) {
-			const that = this
+		dotask(item) {
+			const that = this;
+			const id = item.taskid
+			 const status = item.status
 			if (status == 1) {
 				pickupTaskprize({ taskid: id }).then(res => {
-					
-						Toast(res.info)
-					
-					
+					Toast(res.info);
+
 					that.init();
+					that.$emit('init');
 				});
 				return;
 			}
 			if (status == 0) {
 				switch (id) {
 					case '1':
-						that.gz();
+						window.open(item.directurl)
 						break;
 					case '2':
 						that.share = true;
-						
+
 						setTimeout(() => {
 							that.showShare();
 						}, 200);
+
+						break;
+					case '3':
+						window.wx.miniProgram.navigateTo({ url: '/pages/share/index?name=' + that.nickname+'&shareId='+localStorage.getItem('shareId') });
 
 						break;
 				}
@@ -173,12 +202,13 @@ export default {
 			this.show = true;
 			const that = this;
 			var ua = navigator.userAgent.toLowerCase();
+			that.close();
+			//if (that.data.method == 'directpage') {
 			
-			if(that.data.method=="directpage"){
-				window.location.href=that.data.directurl
-			}else{
-				that.ewm = true;
-			}
+			window.open(that.data.directurl)
+			//} else {
+			//that.ewm = true;
+			//}
 			/*
 			if (ua.match(/MicroMessenger/i) == 'micromessenger') {
 				//ios的ua中无miniProgram，但都有MicroMessenger（表示是微信浏览器）
@@ -211,6 +241,13 @@ export default {
 	width: 100%;
 	height: 100vh;
 	background: rgba(0, 0, 0, 0.7);
+	.close {
+		position: absolute;
+		top: 30px;
+		right: 30px;
+		width: 50px;
+		z-index: 9;
+	}
 	.pop_body {
 		position: absolute;
 		width: 640px;
@@ -231,32 +268,32 @@ export default {
 		span {
 			margin-top: 20px;
 		}
-		.close {
-			position: absolute;
-			top: 30px;
-			right: 30px;
-			width: 50px;
-		}
+
 		.logo {
 			width: 360px;
 			margin: 0 auto;
 		}
 	}
 
+	.canvasImg {
+		position: absolute;
+		top: 0;
+		left: 0;
+		z-index: 2;
+	}
 	.top {
 		position: absolute;
-		top: 40px;
-		left: 50%;
-		width: 600px;
-		margin-left: -300px;
-		border-radius: 30px;
+		top: 0;
+		left: 0;
+		width: 100%;
+
 		overflow: hidden;
 		.user {
 			position: absolute;
 			left: 50%;
-			bottom: 200px;
-			width: 360px;
-			margin-left: -150px;
+			bottom: 280px;
+			width: 400px;
+			margin-left: -160px;
 			display: flex;
 			color: #794001;
 			align-items: center;
@@ -321,7 +358,7 @@ export default {
 	width: 100%;
 
 	box-sizing: border-box;
-	padding: 90px 35px 0px;
+	padding: 90px 35px 34px;
 
 	background: linear-gradient(180deg, #ebe3cb 1%, #e0efc9 100%);
 	border-radius: 32px 32px 0px 0px;

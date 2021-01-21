@@ -89,6 +89,7 @@ export const addHahacoin = (data) => getForm('/index/add_hahacoin', data);
 export const getTaskList = (data) => getForm('/leaguer/get_task_list', data);
 export const helpContent = (data) => getForm('/mysteryboxmall/help_content', data);
 export const helpUrl = (data) => getForm('/mysteryboxmall/help_page', data);
+export const getQrcode = (data) => getForm('/wx/get_mp_qrcode?extra='+localStorage.getItem('shareId'), data);
 export const pickupTaskprize = (data) => getForm('/leaguer/pickup_taskprize', data);
 export const prizeVerifyDo = (data) => postForm('/mysteryboxmall/prize_verify_do', data);
 export const getJssdkconfig = (data) => postForm('/wx/get_jssdkconfig?url='+window.location.href.split('#')[0], data);

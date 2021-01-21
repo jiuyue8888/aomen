@@ -37,6 +37,7 @@ console.log(res)
 		'updateTimelineShareData', 
 		'onMenuShareAppMessage', 
 		'onMenuShareTimeline',
+		'translateVoice',
 		'hideMenuItems'],
    });
    wx.ready(function () {

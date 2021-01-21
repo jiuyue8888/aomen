@@ -188,7 +188,7 @@ export default {
 				that[type] = false;
 				that.anShow = false;
 				this.value = '';
-			}, 1000);
+			}, 500);
 		},
 		getTime() {},
 		getDate() {
@@ -326,7 +326,7 @@ export default {
 		left: 0;
 		bottom: 0;
 		box-sizing: border-box;
-		padding: 95px;
+		padding: 95px 95px 129px;
 		background: #ffffff;
 		border-radius: 32px 32px 0px 0px;
 	}

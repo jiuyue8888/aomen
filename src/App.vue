@@ -1,6 +1,8 @@
 <template>
 	<div id="app">
-		<div v-show="show" class="back" @click="$router.push('./')"><img src="http://cloud.digitalbaygroup.com:88/index.php?explorer/index/fileOut&path=%7Bsource%3A6837%7D%2F&accessToken=da39LEjLQNuPz7qKYVnbOhJgHEcpoAmgH-JFL11Iu1puIz8Dt5FA-ZD9j3uDsR9A9gbXV57QH3Tfd_Xj1g"></div>
+		<div v-show="show" class="back" @click="$router.push('./')">
+			<img src="./assets/home/back.png">
+		</div>
 		<router-view />
 	</div>
 </template>
@@ -45,11 +47,11 @@
 		animation-duration: 0.5s;
 	}
 	.back{
-		position: absolute;
-		left: 30px;
+		position: fixed;
+		left: 20px;
 		top:20px;
 		z-index: 9;
-		width: 40px;
+		width: 80px;
 	}
 	.van-tab__text--ellipsis{
 		display: block;

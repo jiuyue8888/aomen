@@ -34,14 +34,12 @@
 			澳門小鎮
 			<br>數字化遊戲營銷服務平台	                            
 		</div>
-		<task v-if="taskShow" @hide="hide"></task>
+		<task v-if="taskShow" @hide="hide" @init="init"></task>
 		<div class="pop" v-show="help">
 			
 			<div class="pop_body">
 				<img src="../../assets/task/close.png" class="close" @click="help=false"/>
-				<div>
-					<iframe id="show-iframe"  frameborder=0 name="showHere" scrolling=auto :src="html"></iframe>
-				</div>
+				
 			</div>
 		</div>
 	</div>
@@ -59,24 +57,27 @@
 				list:JSON.parse(localStorage.getItem('list'))||[],
 				help:false,
 				html:'',
+				
 				hahacoin:localStorage.getItem('hahacoin')||0
 			}
 		},
 		created() {
 			const that = this;
-			
-			console.log(that.getQueryString('auth_token'))
+			const shareId=this.getQueryString('shareId');
+			console.log('shareId',shareId)
 			
 			if(window.location.origin.indexOf('localhost')>=0){
 				getToken()
-				userinfo({}).then(res=>{
-					localStorage.setItem('hahacoin', res.data.hahacoin);
-					localStorage.setItem('subscribe', res.data.subscribe);
-					localStorage.setItem('nickname', res.data.nickname);
-					this.hahacoin = res.data.hahacoin
-				})
+				that.init()
 			}else{
-				const url = localStorage.getItem('env')=='test'?`https://api-dev.macaotown.com/wx/get_userinfo?backurl=/`:`https://api.macaotown.com/wx/get_userinfo?backurl=/`;
+				const url = localStorage.getItem('env')=='test'?`https://api-dev.macaotown.com/wx/get_userinfo?recommendlid=${shareId}&backurl=/`:
+				`https://api.macaotown.com/wx/get_userinfo?recommendlid=${shareId}&backurl=/`;
+				if((shareId!=null || shareId!=undefined)&&localStorage.getItem('share')!=1){
+					localStorage.setItem('token', 'Bearer '+that.getQueryString('auth_token'))
+					localStorage.setItem('share', 1)
+					window.location.href = url
+				}
+				
 				if(localStorage.getItem('token')==undefined||localStorage.getItem('token')==null||localStorage.getItem('token')=='null'||
 				localStorage.getItem('token')=='undefined'){
 					localStorage.setItem('token', 'Bearer '+that.getQueryString('auth_token'))
@@ -85,15 +86,11 @@
 					if(that.getQueryString('auth_token')!=null){
 						localStorage.setItem('token', 'Bearer '+that.getQueryString('auth_token'))
 					}
-					userinfo({}).then(res=>{
-						localStorage.setItem('hahacoin', res.data.hahacoin);
-						localStorage.setItem('subscribe', res.data.subscribe);
-						localStorage.setItem('nickname', res.data.nickname);
-						this.hahacoin = res.data.hahacoin
-					})
+					that.init()
 					
 				}
 			}
+			
 			home().then(res=>{
 				this.list = res.data;
 				localStorage.setItem('list', JSON.stringify(res.data));
@@ -108,6 +105,15 @@
 		methods: {
 			openUrl(url){
 				window.open(url)
+			},
+			init(){
+				userinfo({}).then(res=>{
+					localStorage.setItem('hahacoin', res.data.hahacoin);
+					localStorage.setItem('subscribe', res.data.subscribe);
+					localStorage.setItem('nickname', res.data.nickname);
+					localStorage.setItem('shareId', res.data.id);
+					this.hahacoin = res.data.hahacoin
+				})
 			},
 			getQueryString(name) {
 			    var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
@@ -244,7 +250,7 @@
 			}
 			.add{
 				position: absolute;
-				top:5px;
+				top:4px;
 				right:3px;
 				width: 44px;
 				height: 44px;

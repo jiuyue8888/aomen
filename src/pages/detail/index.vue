@@ -88,7 +88,7 @@
 				
 			</div>
 		</div>
-		<task v-if="taskShow" @hide="hide('taskShow')"></task>
+		<task v-if="taskShow" @hide="hide('taskShow')" @init="getUser"></task>
 	</div>
 </template>
 
@@ -131,6 +131,9 @@ export default {
 				localStorage.setItem('hahacoin', res.data.hahacoin);
 				this.num = res.data.hahacoin
 			});
+		},
+		init(){
+			
 		},
 		btnClick(n) {
 			const that = this;
@@ -383,6 +386,10 @@ export default {
 		margin: 0 auto;
 		background: url(../../assets/detail/bg.png) no-repeat 0 0;
 		background-size: 100%;
+		.my-swipe{
+			overflow: hidden;
+			border-radius:30px 30px 0 0;
+		}
 		.top {
 			position: relative;
 			width: 700px;
