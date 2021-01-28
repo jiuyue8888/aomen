@@ -4,17 +4,12 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import 'lib-flexible'
-import { Swipe, SwipeItem,PasswordInput, NumberKeyboard,Toast,Field,Tab, Tabs  } from 'vant';
+import Vant from 'vant';
 import 'vant/lib/index.css';
 import VConsole from 'vconsole'
 
-Vue.use(Tab);
-Vue.use(Tabs);
-Vue.use(Field);
-Vue.use(Swipe);
-Vue.use(SwipeItem);
-Vue.use(PasswordInput);
-Vue.use(NumberKeyboard);
+Vue.use(Vant);
+
 Vue.config.productionTip = false
 console.log(process.env.NODE_ENV)
 window.localStorage.setItem('env','pro')

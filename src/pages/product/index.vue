@@ -13,13 +13,33 @@
 				</div>
 			</div>
 			<div class="part2">
-				<p>
+				
+				<p v-if="data.status==1">
 					獎品編號：{{ data.couponno }}
 					<br />
 					有效期至：{{ data.exptime }}
 				</p>
-				<div class="addBtn" @click="addBtnClick" v-if="needfill==1">請填寫資料</div>
-				<img src="../../assets/product/user.png" v-else @click="useBtn" />
+				<p v-if="data.status==0">
+					獎品編號：{{ data.couponno }}
+					<br />
+					過期時間：{{ data.exptime }}
+				</p>
+				<p v-if="data.status==2">
+					獎品編號：{{ data.couponno }}
+					<br />
+					使用時間：{{ data.pickuptime }}
+				</p>
+				
+				
+					<div v-if="data.status==1">
+						<div class="addBtn" @click="addBtnClick" v-if="needfill==1">請填寫資料</div>
+						<img src="../../assets/product/user.png"  v-else @click="useBtn" />
+					</div>
+					
+					<img src="../../assets/detail/ygq.png" v-if="data.status==0"/>
+					<img src="../../assets/product/ysy.png" v-if="data.status==2"/>
+				
+				
 			</div>
 		</div>
 		<div class="pop pop1" v-if="pop1">
@@ -320,7 +340,7 @@ export default {
 	background: rgba(0, 0, 0, 0.8);
 	.pop_body {
 		width: 100%;
-		height: 840px;
+		height: 940px;
 		overflow: auto;
 		position: absolute;
 		left: 0;

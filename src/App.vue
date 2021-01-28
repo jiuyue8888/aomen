@@ -1,9 +1,17 @@
 <template>
 	<div id="app">
-		<div v-show="show" class="back" @click="$router.push('./')">
+		<div v-show="show" class="back" @click="click">
 			<img src="./assets/home/back.png">
 		</div>
 		<router-view />
+		<div class="loading">
+			<img src="./assets/home/logo.png" />
+			<van-loading color="#4EB6A4" />
+		</div>
+		<div class="hezi">
+			<img src="./assets/home/he.png" />
+			<p>盲盒正在打開...</p>
+		</div>
 	</div>
 </template>
 
@@ -13,10 +21,19 @@
 		name: 'App',
 		data(){
 			return {
-				show:this.$route.path!='/'
+				show:this.$route.path!='/',
 			}
 		},
-		
+		methods:{
+			click(){
+				if(this.$route.path=='/product'){
+					this.$router.push('./list')
+				}else{
+					this.$router.push('./')
+				}
+				
+			}
+		},
 		watch:{
 		    $route:{
 		      handler(val,oldval){
@@ -31,6 +48,84 @@
 
 <style>
 	@import url("animate.css");
+	.hezi{
+		display: none;
+		position: fixed;
+		top: 0;
+		left: 0;
+		z-index: 999;
+		width: 100%;
+		height: 100vh;
+		color: #fff;
+		text-align: center;
+		background: rgba(0,0,0,0.6);
+	}
+	.hezi p{
+		position: absolute;
+		left: 0;
+		top:45%;
+		
+		width: 100%;
+		margin-top: 100px;
+	}
+	.hezi img{
+		position: absolute;
+		left: 50%;
+		top:45%;
+		
+		width: 100px;
+		margin-left: -50px;
+		animation:bounce 1s ease both infinite;
+
+	}
+	@-webkit-keyframes bounce{
+	0%,20%,50%,80%,100%{-webkit-transform:translateY(0)}
+	40%{-webkit-transform:translateY(-30px)}
+	60%{-webkit-transform:translateY(-15px)}
+	}
+	@-moz-keyframes bounce{
+	0%,20%,50%,80%,100%{-moz-transform:translateY(0)}
+	40%{-moz-transform:translateY(-30px)}
+	60%{-moz-transform:translateY(-15px)}
+	}
+	.loading{
+		display: none;
+		position: fixed;
+		top: 0;
+		left: 0;
+		z-index: 999;
+		width: 100%;
+		height: 100vh;
+		background: url(assets/list/lbg.png) no-repeat 0 0;
+		background-size: 100%;
+		
+	}
+	
+	.loading img{
+		position: absolute;
+		left: 50%;
+		top:50%;
+		transform: translate(-50%,-50%);
+		width: 160px;
+	}
+	
+	.van-loading__spinner{
+		
+		width: 260px;
+		height: 260px;
+	}
+	.van-loading{
+		position: absolute;
+		left: 50%;
+		top:50%;
+		transform: translate(-50%,-50%);
+		width: 260px;
+		height: 260px;
+	}
+	
+	.van-loading__circular circle{
+		stroke-width: 1;
+	}
 	* {
 		padding: 0;
 		margin: 0;
@@ -42,6 +137,10 @@
 	}
 	li{
 		list-style: none;
+	}
+	body{
+	   
+	    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 	}
 	.animated {
 		animation-duration: 0.5s;
@@ -55,7 +154,7 @@
 	}
 	.van-tab__text--ellipsis{
 		display: block;
-		width: 230px;
+		width: 200px;
 		height: 90px;
 		line-height: 90px;
 		text-align: center;
@@ -72,9 +171,9 @@
 	.van-tabs__wrap{
 		position: fixed;
 		top: 20px;
-		left: 50%;
-		transform: translate(-50%,0);
-		width: 700px;
+		left: 1.4rem;
+		
+		width: 630px;
 		height: 90px!important;
 		line-height: 90px!important;
 		background: rgba(255, 255, 255, 1);
@@ -110,12 +209,17 @@
 	    box-shadow: 0px 8px 35px 0px rgba(0, 0, 0, 0.2);
 	    border-radius: 45px;
 	}
+	.van-swipe-item{
+		border-radius: 30px 30px 0 0;
+		overflow: hidden;
+	}
 	.van-tabs__nav{
 		background: transparent;
 	}
 	.van-toast--html, .van-toast--text{
 		padding: 60px 80px!important;
 		font-size: 30px!important;
+		line-height: 40px!important;
 	}
 	.van-field__body{
 		height: 100%;

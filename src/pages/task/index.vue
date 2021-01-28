@@ -19,7 +19,7 @@
 							+{{ item.prizeremark }}
 						</p>
 						<b @click="dotask(item)" :class="item.status > 1 ? 'curr' : ''">
-							<h4 class="animated fadeInUp1 infinite" v-show="item.taskid == 2">上限3個</h4>
+							<h4 class="animated fadeInUp1 infinite" v-show="item.taskid == 3||item.taskid == 2">每日上限{{ item.targetfinish }}個</h4>
 							{{ item.btn_name }}
 						</b>
 					</dd>
@@ -138,6 +138,7 @@ export default {
 			const that = this;
 			const w = that.$refs.box.clientWidth;
 			const h = that.$refs.box.clientHeight;
+			
 			html2canvas(that.$refs.box, {
 				width: w, //画布的宽度，即生成图片的宽度
 				height: h, //画布的宽度，同上
@@ -155,7 +156,7 @@ export default {
 				.catch(res => {
 					console.log(res);
 				});
-			console.log('that.imgShare----', that.imgShare);
+			
 		},
 		close() {
 			const that = this;
@@ -180,10 +181,13 @@ export default {
 			if (status == 0) {
 				switch (id) {
 					case '1':
-						window.open(item.directurl)
+						that.close()
+						setTimeout(()=>{window.open(item.directurl+'/')},500)
+						
 						break;
 					case '2':
 						that.share = true;
+						that.wxShow = false;
 
 						setTimeout(() => {
 							that.showShare();
@@ -191,6 +195,7 @@ export default {
 
 						break;
 					case '3':
+						that.close()
 						window.wx.miniProgram.navigateTo({ url: '/pages/share/index?name=' + that.nickname+'&shareId='+localStorage.getItem('shareId') });
 
 						break;
@@ -396,8 +401,8 @@ export default {
 			position: absolute;
 			top: -40px;
 			left: 50%;
-			margin-left: -59px;
-			width: 118px;
+			margin-left: -80px;
+			width: 160px;
 			height: 40px;
 
 			font-size: 24px;

@@ -25,7 +25,23 @@ const serve = axios.create({
 	baseURL:'/api'
 })
 
-
+axios.interceptors.request.use(config => {
+	// 在发送请求之前做些什么
+	console.log('config----',config)
+	if(config.url.indexOf('mystery_buyfive')>=0 || config.url.indexOf('mystery_buyone')>=0){
+		document.getElementsByClassName('hezi')[0].style.display='block';
+	}else{
+		document.getElementsByClassName('loading')[0].style.display='block';
+		document.getElementsByClassName('loading')[0].style.opacity='0';
+		setTimeout(()=>{document.getElementsByClassName('loading')[0].style.opacity='1'},1000)
+	}
+	
+	
+	return config;
+}, error => {
+	// 对请求错误做些什么
+	return Promise.reject(error);
+});
 
 const formObj = (params) => {
 	var formData = new FormData();
@@ -46,7 +62,7 @@ const postForm = (url, data) => {
 			'Authorization': localStorage.getItem('token')
 		}
 	}).then(res => {
-		
+		document.getElementsByClassName('loading')[0].style.display='none'
 		return res.data
 	});
 };
@@ -64,6 +80,13 @@ const getForm = (url, data,call) => {
 		}
 	}).then(res => {
 		call&&call(res.data)
+		
+		if(url.indexOf('mystery_buyfive')>=0 || url.indexOf('mystery_buyone')>=0){
+
+		}else{
+			document.getElementsByClassName('loading')[0].style.display='none';
+			return res.data
+		}
 		return res.data
 	});
 };
