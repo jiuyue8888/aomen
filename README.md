@@ -13,8 +13,11 @@ yarn run dev
 
 # 测试包
 yarn run build:test
-
+main.js 这里改成：
+window.localStorage.setItem('env','test')
 # 正式包
+main.js 这里改成：
+ window.localStorage.setItem('env','pro')
 yarn run build
 ```
 

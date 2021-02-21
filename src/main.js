@@ -12,7 +12,7 @@ Vue.use(Vant);
 
 Vue.config.productionTip = false
 console.log(process.env.NODE_ENV)
-window.localStorage.setItem('env','pro')
+window.localStorage.setItem('env','test')
 /*
 const local = window.location.host;
 const dev = 'http://api.mtown.me';

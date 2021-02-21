@@ -66,7 +66,7 @@
 						<img src="../../assets/detail/again.png" @click="btnClick(data.price)" />
 					</div>
 					<div class="btns" v-else>
-						<div class="btn" @click="$router.push('./')">前往盲盒商城</div>
+						<div class="btn" @click="$router.push('./')"><img src="../../assets/detail/qsc.png"></div>
 						<img src="../../assets/detail/again.png" @click="btnClick(data.price)" />
 					</div>
 				</div>
@@ -347,8 +347,7 @@ export default {
 		line-height: 90px;
 		color: #fff;
 		font-size: 32px;
-		background: url(../../assets/detail/lv.png) no-repeat 0 0;
-		background-size: 100%;
+		
 	}
 	h3 {
 		font-size: 40px;
