@@ -108,6 +108,7 @@ export const userinfo = (data) => getForm('/leaguer/userinfo', data,(res)=>{
 	}
 });
 export const getUserinfo = (data) => getForm('/wx/get_userinfo', data);
+
 export const addHahacoin = (data) => getForm('/index/add_hahacoin', data);
 export const getTaskList = (data) => getForm('/leaguer/get_task_list', data);
 export const helpContent = (data) => getForm('/mysteryboxmall/help_content', data);
@@ -129,3 +130,4 @@ export const getToken = () =>{
 	});
 }
 
+export const dotask = (url) => getForm(url,{});

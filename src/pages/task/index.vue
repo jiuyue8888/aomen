@@ -79,7 +79,7 @@
 </template>
 
 <script>
-import { getTaskList, pickupTaskprize,userinfo,getQrcode } from '../../serve/index.js';
+import { getTaskList, pickupTaskprize,userinfo,getQrcode,dotask } from '../../serve/index.js';
 import CommonShare from '../../unitls/index.js';
 import html2canvas from 'html2canvas';
 import { Toast } from 'vant';
@@ -172,13 +172,20 @@ export default {
 			if (status == 1) {
 				pickupTaskprize({ taskid: id }).then(res => {
 					Toast(res.info);
-
 					that.init();
 					that.$emit('init');
 				});
 				return;
 			}
 			if (status == 0) {
+				if(item.method=='apiurl'){
+					that.init();
+					that.$emit('init');
+					dotask(item.directurl).then(res=>{
+						Toast('獎勵領取成功！');
+					})
+					return;
+				}
 				switch (id) {
 					case '1':
 						that.close()
@@ -203,6 +210,7 @@ export default {
 				return;
 			}
 		},
+		
 		gz() {
 			this.show = true;
 			const that = this;
