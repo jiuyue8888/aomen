@@ -79,7 +79,7 @@
 </template>
 
 <script>
-import { getTaskList, pickupTaskprize,userinfo,getQrcode,dotask } from '../../serve/index.js';
+import { getTaskList, pickupTaskprize,userinfo,getQrcode,dotaskClick } from '../../serve/index.js';
 import CommonShare from '../../unitls/index.js';
 import html2canvas from 'html2canvas';
 import { Toast } from 'vant';
@@ -179,9 +179,10 @@ export default {
 			}
 			if (status == 0) {
 				if(item.method=='apiurl'){
-					that.init();
-					that.$emit('init');
-					dotask(item.directurl).then(res=>{
+					
+					dotaskClick(item.directurl).then(res=>{
+						that.init();
+						that.$emit('init');
 						Toast('獎勵領取成功！');
 					})
 					return;

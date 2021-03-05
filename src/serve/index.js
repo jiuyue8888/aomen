@@ -130,4 +130,4 @@ export const getToken = () =>{
 	});
 }
 
-export const dotask = (url) => getForm(url,{});
+export const dotaskClick = (url) => getForm(url,{});
