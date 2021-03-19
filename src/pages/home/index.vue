@@ -72,10 +72,7 @@ export default {
 		console.log('href', location.href);
 		console.log('shareId', shareId);
 
-		if (window.location.origin.indexOf('localhost') >= 0) {
-			//getToken()
-			//that.init()
-		} else {
+		
 			const url =
 				localStorage.getItem('env') == 'test'
 					? `https://api-dev.macaotown.com/wx/get_userinfo_bynauth?recommendlid=${shareId}&backurl=/`
@@ -103,7 +100,7 @@ export default {
 				}
 				that.init();
 			}
-		}
+		
 
 		home().then(res => {
 			this.list = res.data;

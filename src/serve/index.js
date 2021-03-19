@@ -79,6 +79,9 @@ const getForm = (url, data,call) => {
 			'Authorization': localStorage.getItem('token')
 		}
 	}).then(res => {
+		if(res.data.status==0){
+			
+		}
 		call&&call(res.data)
 		
 		if(url.indexOf('mystery_buyfive')>=0 || url.indexOf('mystery_buyone')>=0){

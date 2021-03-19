@@ -104,6 +104,7 @@ export default {
 			taskShow: false, //任务弹窗
 			data: {}, //盲盒详情数据
 			popData: {}, //中奖弹窗数据
+			buynum:1,
 			buyType: 1,
 			lock: true,
 			id: this.$route.query.id,
@@ -122,6 +123,7 @@ export default {
 				mbid: this.$route.query.id
 			}).then(res => {
 				this.data = res.data;
+				this.buynum = 
 			});
 		},
 		getUser() {
