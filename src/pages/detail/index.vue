@@ -15,11 +15,12 @@
 						<img src="../../assets/detail/jb.png" />
 						<span>{{ data.price }}</span>
 					</div>
-					<div class="right" @click="btnClick((data.price * 5 * data.x5_rebate) / 100)">
+					<div class="right" @click="btnClick((data.price * data.buynum * data.buyrebate) / 100)">
+						<b class="text">開{{data.buynum}}個</b>
 						<img src="../../assets/detail/jb.png" />
-						<span>{{ (data.price * 5 * data.x5_rebate) / 100 }}</span>
+						<span>{{ (data.price * data.buynum * data.buyrebate) / 100 }}</span>
 						<i><img src="../../assets/detail/tip.png" /></i>
-						<em>原價{{ data.price * 5 }}</em>
+						<em>原價{{ data.price * data.buynum }}</em>
 					</div>
 				</div>
 				<div class="down">
@@ -123,7 +124,6 @@ export default {
 				mbid: this.$route.query.id
 			}).then(res => {
 				this.data = res.data;
-				this.buynum = 
 			});
 		},
 		getUser() {
@@ -146,7 +146,8 @@ export default {
 			} else {
 				if (n != that.data.price) {
 					mysteryBuyfive({
-						mbid: that.$route.query.id
+						mbid: that.$route.query.id,
+						num:that.data.buynum
 					}).then(res => {
 						setTimeout(() => {
 							document.getElementsByClassName('hezi')[0].style.display = 'none';
@@ -156,7 +157,7 @@ export default {
 								that.pop2 = true;
 								that.popData = res.data;
 
-								that.buyType = 5;
+								that.buyType = that.data.buynum;
 							} else {
 								Toast(res.info);
 							}
@@ -205,6 +206,16 @@ export default {
 .delay4 {
 	animation-delay: 1.2s;
 }
+.text{
+    position: absolute;
+    left: 0.1rem;
+        bottom: 0.1rem;
+        width: 1.3rem;
+        text-align: center;
+        font-size: 0.3rem;
+        font-weight: normal;
+
+  }
 .pop {
 	position: fixed;
 	left: 0;

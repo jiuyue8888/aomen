@@ -99,7 +99,7 @@ export const home = (data) => getForm('/mysteryboxmall/home', data);
 export const detail = (data) => getForm('/mysteryboxmall/detail', data);
 export const myprizeDetail = (data) => getForm('/mysteryboxmall/myprize_detail', data);
 export const mysteryBuyone = (data) => getForm('/mysteryboxmall/mystery_buyone', data);
-export const mysteryBuyfive = (data) => getForm('/mysteryboxmall/mystery_buyfive', data);
+export const mysteryBuyfive = (data) => getForm('/mysteryboxmall/mystery_buyn', data);
 export const prizeVerify = (data) => getForm('/mysteryboxmall/prize_verify', data);
 export const myList = (data) => getForm('/mysteryboxmall/my_prize_list', data);
 export const openMystery = (data) => getForm('/mysteryboxmall/open_mystery', data);
