@@ -28,7 +28,7 @@ const serve = axios.create({
 axios.interceptors.request.use(config => {
 	// 在发送请求之前做些什么
 	console.log('config----',config)
-	if(config.url.indexOf('mystery_buyfive')>=0 || config.url.indexOf('mystery_buyone')>=0){
+	if(config.url.indexOf('mystery_buyn')>=0 || config.url.indexOf('mystery_buyone')>=0){
 		document.getElementsByClassName('hezi')[0].style.display='block';
 	}else{
 		document.getElementsByClassName('loading')[0].style.display='block';

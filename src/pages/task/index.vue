@@ -4,26 +4,29 @@
 			<div :class="show ? 'task animated fadeOutDown' : 'task animated fadeInUp'">
 				<div class="close" @click="close"><img src="../../assets/task/close.png" /></div>
 				<h3>獲取哈哈幣任務</h3>
+				<div class="mh">
+					<dl v-for="(item, id) in data">
+						<dt><img :src="item.icon" /></dt>
+						<dd>
+							<h5>{{ item.name }}</h5>
+							<span>
+								<strong><em :style="`width:${(item.nowfinish / item.targetfinish) * 100}%`"></em></strong>
+								<i>{{ item.nowfinish }}/{{ item.targetfinish }}</i>
+							</span>
+							<p>
+								獲得：
+								<img src="../../assets/detail/jb.png" />
+								+{{ item.prizeremark }}
+							</p>
+							<b @click="dotask(item)" :class="item.status > 1 ? 'curr' : ''">
+								<h4 class="animated fadeInUp1 infinite" v-show="item.taskid == 3||item.taskid == 2">每日上限{{ item.targetfinish }}個</h4>
+								{{ item.btn_name }}
+							</b>
+						</dd>
+					</dl>
+				</div>
 
-				<dl v-for="(item, id) in data">
-					<dt><img :src="item.icon" /></dt>
-					<dd>
-						<h5>{{ item.name }}</h5>
-						<span>
-							<strong><em :style="`width:${(item.nowfinish / item.targetfinish) * 100}%`"></em></strong>
-							<i>{{ item.nowfinish }}/{{ item.targetfinish }}</i>
-						</span>
-						<p>
-							獲得：
-							<img src="../../assets/detail/jb.png" />
-							+{{ item.prizeremark }}
-						</p>
-						<b @click="dotask(item)" :class="item.status > 1 ? 'curr' : ''">
-							<h4 class="animated fadeInUp1 infinite" v-show="item.taskid == 3||item.taskid == 2">每日上限{{ item.targetfinish }}個</h4>
-							{{ item.btn_name }}
-						</b>
-					</dd>
-				</dl>
+				
 			</div>
 		</div>
 		<div class="pop" v-show="ewm">
@@ -370,12 +373,17 @@ export default {
 	bottom: 0;
 	z-index: 55;
 	width: 100%;
-
+	max-height: 60vh;
+	
 	box-sizing: border-box;
 	padding: 90px 35px 34px;
 
 	background: linear-gradient(180deg, #ebe3cb 1%, #e0efc9 100%);
 	border-radius: 32px 32px 0px 0px;
+	.mh{
+		height: calc(60vh - 230px);
+		overflow: auto;
+	}
 	.close {
 		position: absolute;
 		top: 36px;

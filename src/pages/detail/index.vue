@@ -15,12 +15,13 @@
 						<img src="../../assets/detail/jb.png" />
 						<span>{{ data.price }}</span>
 					</div>
-					<div class="right" @click="btnClick((data.price * data.buynum * data.buyrebate) / 100)">
+					<div class="right" @click="btnClick((data.price * data.buynum * data.buyrebate) / 100)"
+					:style="data.buyrebate==100?'paddingTop:0.2rem':''">
 						<b class="text">開{{data.buynum}}個</b>
 						<img src="../../assets/detail/jb.png" />
 						<span>{{ (data.price * data.buynum * data.buyrebate) / 100 }}</span>
-						<i><img src="../../assets/detail/tip.png" /></i>
-						<em>原價{{ data.price * data.buynum }}</em>
+						<div class="i" v-if="data.buyrebate<100"><img src="../../assets/detail/tip.png" /><i>-{{100-data.buyrebate}}%</i></div>
+						<em v-if="data.buyrebate<100">原價{{ data.price * data.buynum }}</em>
 					</div>
 				</div>
 				<div class="down">
@@ -48,7 +49,7 @@
 				</b>
 			</div>
 		</div>
-		<div class="pop pop2" v-show="pop2">
+		<div class="pop pop2" v-if="pop2">
 			<div class="pop_body">
 				<img src="../../assets/detail/titlepop.png" class="title" />
 				<img src="../../assets/detail/close.png" class="close" @click="hide('pop2')" />
@@ -72,7 +73,7 @@
 					</div>
 				</div>
 				<div v-else>
-					<div class="imgbg animated ntop"><img src="../../assets/detail/guang.png" /></div>
+					<div class="imgbg animated ntop" v-if="false"><img src="../../assets/detail/guang.png" /></div>
 					<div class="popList">
 						<div v-for="(item, id) in popData" :class="'animated bounceIn delay' + id">
 							<img :src="item.icon" />
@@ -206,6 +207,19 @@ export default {
 .delay4 {
 	animation-delay: 1.2s;
 }
+.delay5 {
+	animation-delay: 1.4s;
+}
+.delay6 {
+	animation-delay: 1.6s;
+}
+.delay7 {
+	animation-delay: 1.8s;
+}
+.delay8 {
+	animation-delay: 2s;
+}
+
 .text{
     position: absolute;
     left: 0.1rem;
@@ -382,9 +396,16 @@ export default {
 	}
 }
 .popList {
-	width: 100%;
+	width: 660px;
+	height: 727px;
+	margin: 0 auto .26rem;
+	overflow: auto;
 	box-sizing: border-box;
-	padding: 40px 50px 90px;
+	padding: 13px;
+
+	
+	background-color: rgba(82, 82, 82, 0.8);
+	
 	display: flex;
 	justify-content: center;
 	flex-wrap: wrap;
@@ -527,7 +548,7 @@ export default {
 			align-items: center;
 			background: url(../../assets/detail/p2.png) no-repeat 0 0;
 			background-size: 100%;
-			i {
+			.i {
 				position: absolute;
 				top: -29px;
 				right: -20px;
@@ -535,6 +556,15 @@ export default {
 				img {
 					width: 100%;
 				}
+			}
+			i{
+				position: absolute;
+				   top: .28rem;
+				       left: .36rem;
+				       display: block;
+				       font-style: normal;
+				       font-size: .28rem;
+				    transform: rotate(26deg);
 			}
 			em {
 				position: absolute;
